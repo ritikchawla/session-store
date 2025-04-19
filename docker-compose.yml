@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  aerospike:
+    image: aerospike/aerospike-server
+    container_name: aerospike
+    ports:
+      - "3000:3000"
+    volumes:
+      - aerospike_data:/opt/aerospike/data
+
+  session-store:
+    build: .
+    container_name: session-store
+    depends_on:
+      - aerospike
+    ports:
+      - "8080:8080"
+    environment:
+      AEROSPIKE_HOST: aerospike
+      AEROSPIKE_PORT: "3000"
+      SESSION_TTL: "1800"
+
+volumes:
+  aerospike_data:
